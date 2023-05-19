@@ -4,6 +4,9 @@ const validateBody = schema => {
   const func = (req, res, next) => {
     const { error } = schema.validate(req.body);
     if (error) {
+      if (!Object.keys(req.body).length) {
+        next(HttpError(400, `missing fields`));
+      }
       const requiredFields = ['name', 'email', 'phone'];
       const missingFields = requiredFields.filter(
         fieldName => !Object.keys(req.body).includes(fieldName)
