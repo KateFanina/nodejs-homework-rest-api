@@ -11,7 +11,7 @@ const validateBody = schema => {
       const missingFields = requiredFields.filter(
         fieldName => !Object.keys(req.body).includes(fieldName)
       );
-      if (missingFields.length > 0) {
+      if (missingFields.length > 0 && !req.baseUrl.includes('users')) {
         const label = missingFields.join(', ');
         next(HttpError(400, `missing required ${label} field(s)`));
       } else {
