@@ -20,13 +20,6 @@ const register = async (req, res) => {
   const avatarURL = gravatar.url(email);
   const newUser = await User.create({ ...req.body, password: hashPassword, avatarURL });
 
-  jimp.read(avatarDir).then(image => {
-    image.resize(250, 250, Jimp.RESIZE_BEZIER);
-    fs.writeFile(path.join(avatarDir, `${newUser._id}.jpg`), err => {
-      if (err) throw err;
-    });
-  });
-
   res.status(201).json({
     user: {
       email: newUser.email,
@@ -77,7 +70,9 @@ const updateAvatar = async (req, res) => {
   const { path: tempUpload, originalname } = req.file;
   const fileName = `${_id}_${originalname}`;
   const resultUpload = path.join(avatarDir, fileName);
-  await fs.rename(tempUpload, resultUpload);
+  const image = await jimp.read(tempUpload);
+  await image.resize(250, 250).write(resultUpload);
+  await fs.unlink(tempUpload);
   const avatarURL = path.join('avatars', fileName);
   await User.findByIdAndUpdate(_id, { avatarURL });
 
