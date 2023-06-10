@@ -53,7 +53,7 @@ const verifyEmail = async (req, res) => {
   }
   await User.findByIdAndUpdate(user._id, { verify: true, verificationToken: null });
 
-  res.json('Verification successful');
+  res.json({ message: 'Verification successful' });
 };
 
 const resendVerifyEmail = async (req, res) => {
@@ -72,7 +72,7 @@ const resendVerifyEmail = async (req, res) => {
     html: `<a target ="_blank" href="${BASE_URL}/users/verify/${user.verificationToken}">Click verify email</a>`,
   };
   await sendEmail(verifyEmail);
-  res.json('Verification email sent');
+  res.json({ message: 'Verification email sent' });
 };
 
 const login = async (req, res) => {
